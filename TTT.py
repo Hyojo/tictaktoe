@@ -63,8 +63,8 @@ def brain_bot(bot, player, element):
                     return i
                 element[i] = " "
 
-    # if element[int(len(element) / 2)] == " ":
-    #     return int(len(element) / 2)
+    if element[int(len(element) / 2)] == " ":
+        return int(len(element) / 2)
 
     rand = random.randint(0, 9)
     if rand > 6 and " " in element:
