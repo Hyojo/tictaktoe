@@ -11,40 +11,41 @@ def games():
 
     bot = 'o' if player == 'x' else 'x'
     print_maps(element)
-
-    while " " in element:
-        player_choose(element, player, True)
-        print_maps(element)
-        if not end_game(element):
-            return
-        if " " in element:
-            player_choose(element, bot, False)
-            print_maps(element)
-            if not end_game(element):
-                return
-        else:
-            print("Ничья")
+    while True:
+        if player_move(player, element):
+            break
+        if bot_move(bot, element):
             break
 
 
-def player_choose(element, player, is_human):
-    if is_human:
-        try:
-            ch = int(input("Выберите ячейку: "))
-            if ch not in range(9):
-                raise ValueError
-        except ValueError:
-            print("Неверный выбор. Попробуйте снова.")
-            return player_choose(element, player, is_human)
-    else:
-        ch = random.randint(0, 8)
+def player_move(player, element):
+    if " " not in element:
+        print("Ничья")
+        return True
 
-    if element[ch] == " ":
+    ch = int(input("Выберите ячейку (0-8): "))
+    if 0 <= ch <= 8 and element[ch] == " ":
         element[ch] = player
     else:
-        if is_human:
-            print("Ячейка занята. Попробуйте снова.")
-        player_choose(element, player, is_human)
+        print("Неверный ход, попробуйте снова.")
+        return player_move(player, element)
+
+    print_maps(element)
+    return check_end_game(element)
+
+
+def bot_move(bot, element):
+    if " " not in element:
+        print("Ничья")
+        return True
+
+    ch = random.randint(0, 8)
+    while element[ch] != " ":
+        ch = random.randint(0, 8)
+
+    element[ch] = bot
+    print_maps(element)
+    return check_end_game(element)
 
 
 def print_maps(element):
@@ -58,7 +59,7 @@ def print_maps(element):
     print(maps)
 
 
-def end_game(element):
+def check_end_game(element):
     winn_comb = [
         (0, 1, 2), (3, 4, 5), (6, 7, 8),  # horizontal
         (0, 3, 6), (1, 4, 7), (2, 5, 8),  # vertical
@@ -68,8 +69,8 @@ def end_game(element):
     for (a, b, c) in winn_comb:
         if element[a] == element[b] == element[c] and element[a] != " ":
             print(f'Выиграли {element[a]}')
-            return False
-    return True
+            return True
+    return False
 
 
 games()
